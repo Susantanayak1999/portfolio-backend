@@ -5,7 +5,9 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ['https://portfolio-frontend-lovat-eta-64.vercel.app', 'http://localhost:5173']
+}));
 app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 
