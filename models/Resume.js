@@ -11,8 +11,7 @@ const ResumeSchema = new mongoose.Schema({
     pdfUrl: String
   },
   about: {
-    summary: String,
-    drives: [{ title: String, desc: String }]
+    summary: String
   },
   services: [{
     title: String,
