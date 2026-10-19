@@ -30,11 +30,13 @@ router.put('/resume', auth, async (req, res) => {
   }
 });
 
-// @route POST /api/admin/upload (NEW)
+// @route POST /api/admin/upload
 router.post('/upload', auth, upload.single('resume'), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-    res.json({ fileUrl: `/uploads/${req.file.filename}` });
+    
+    // 👇 THIS IS THE FIX: Cloudinary gives us the full URL in req.file.path
+    res.json({ fileUrl: req.file.path }); 
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

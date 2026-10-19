@@ -1,16 +1,21 @@
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const path = require('path');
+require('dotenv').config();
 
-const storage = multer.diskStorage({
-  destination: 'uploads/',
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-module.exports = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    ext === '.pdf' ? cb(null, true) : cb(new Error('Only PDFs allowed'));
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'portfolio_resumes',
+    allowed_formats: ['pdf'],
+    resource_type: 'raw' // Required for PDFs
   }
 });
+
+module.exports = multer({ storage: storage });
