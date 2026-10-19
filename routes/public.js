@@ -19,22 +19,22 @@ router.get('/compile-pdf', async (req, res) => {
       return res.status(400).json({ message: 'No LaTeX code found.' });
     }
 
-    // Send code to compiler from the backend (No CORS issues here)
-    const response = await fetch('https://latex.ytotech.com/builds/sync', {
+    // Send code to latexonline.cc
+    const response = await fetch('https://latexonline.cc/compile', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        compiler: 'pdflatex',
-        resources: [{ main: true, content: resume.hero.latexCode }]
-      })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ text: resume.hero.latexCode })
     });
 
-    if (!response.ok) throw new Error("LaTeX compilation failed");
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("LaTeX Compiler Error:", errorText);
+      return res.status(500).json({ message: "LaTeX compilation failed. Check server logs." });
+    }
 
     const blob = await response.blob();
     const buffer = Buffer.from(await blob.arrayBuffer());
 
-    // Send PDF back to frontend
     res.set('Content-Type', 'application/pdf');
     res.send(buffer);
   } catch (err) {
