@@ -8,8 +8,9 @@ const app = express();
 app.use(cors({
   origin: ['https://susanta-portfolio.onrender.com', 'http://localhost:5173']
 }));
+app.use('/uploads', express.static('uploads'));
+app.use(express.json());
 
-// Routes
 const publicRoutes = require('./routes/public');
 app.use('/api/resume', publicRoutes);
 
