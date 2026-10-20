@@ -31,8 +31,8 @@ router.put('/resume', auth, async (req, res) => {
 router.post('/upload', auth, upload.single('resume'), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-    // This returns the path relative to the backend URL
-    res.json({ fileUrl: `/uploads/${req.file.filename}` });
+    // 👇 THIS IS THE FIX: Return the full Cloudinary URL
+    res.json({ fileUrl: req.file.path }); 
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
