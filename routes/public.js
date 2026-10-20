@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const Resume = require('../models/Resume');
+const latex = require('node-latex');
+const { PassThrough } = require('stream');
 
-// Get Resume Data
 router.get('/', async (req, res) => {
   try {
     const resume = await Resume.findOne();
@@ -11,32 +12,29 @@ router.get('/', async (req, res) => {
   }
 });
 
-// NEW: Compile LaTeX to PDF on the Backend
-router.get('/compile-pdf', async (req, res) => {
+// Compile LaTeX to PDF
+router.get('/download-latex', async (req, res) => {
   try {
     const resume = await Resume.findOne();
     if (!resume || !resume.hero.latexCode) {
       return res.status(400).json({ message: 'No LaTeX code found.' });
     }
 
-    // Send code to latexonline.cc
-    const response = await fetch('https://latexonline.cc/compile', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ text: resume.hero.latexCode })
-    });
+    const input = new PassThrough();
+    input.end(resume.hero.latexCode);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("LaTeX Compiler Error:", errorText);
-      return res.status(500).json({ message: "LaTeX compilation failed. Check server logs." });
-    }
-
-    const blob = await response.blob();
-    const buffer = Buffer.from(await blob.arrayBuffer());
+    const pdf = latex(input);
 
     res.set('Content-Type', 'application/pdf');
-    res.send(buffer);
+    res.set('Content-Disposition', 'attachment; filename="Susanta_Resume.pdf"');
+    
+    pdf.pipe(res);
+    
+    pdf.on('error', (err) => {
+      console.error('LaTeX Compile Error:', err);
+      res.status(500).send('LaTeX compilation failed');
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });
