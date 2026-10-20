@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http'); // 👈 Added
 const { Server } = require('socket.io'); // 👈 Added
+const emailRoute = require('./routes/email');
 require('dotenv').config();
 
 const app = express();
@@ -29,6 +30,8 @@ app.set('socketio', io);
 const publicRoutes = require('./routes/public');
 app.use('/api/resume', publicRoutes);
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/email', emailRoute); 
+
 
 app.get('/', (req, res) => {
   res.send('Backend is running successfully!');
