@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+require('dotenv').config(); // 👈 ADD THIS LINE
 const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
