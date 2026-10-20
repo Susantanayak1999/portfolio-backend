@@ -14,9 +14,7 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'portfolio_resumes',
     allowed_formats: ['pdf'],
-    resource_type: 'image', // 👈 Changed from 'raw' to 'image'
-    format: 'pdf', // 👈 Forces the PDF extension
-    public_id: 'Susanta_Resume' 
+    resource_type: 'auto', // 👈 FIX: 'auto' handles both images and raw files perfectly
   }
 });
 
