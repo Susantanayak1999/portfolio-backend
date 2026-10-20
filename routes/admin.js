@@ -5,6 +5,7 @@ const Resume = require('../models/Resume');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
+// @route POST /api/admin/login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -19,6 +20,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// @route PUT /api/admin/resume
 router.put('/resume', auth, async (req, res) => {
   try {
     const resume = await Resume.findOneAndUpdate({}, req.body, { new: true, upsert: true });
@@ -28,11 +30,15 @@ router.put('/resume', auth, async (req, res) => {
   }
 });
 
+// @route POST /api/admin/upload
 router.post('/upload', auth, upload.single('resume'), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-    // 👇 THIS IS THE FIX: Return the full Cloudinary URL
+    
+    // 👇 THIS IS THE MAGIC LINE THAT FIXES IT
+    // Cloudinary automatically puts the full URL in req.file.path
     res.json({ fileUrl: req.file.path }); 
+    
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

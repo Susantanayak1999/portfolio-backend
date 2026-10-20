@@ -8,7 +8,7 @@ const ResumeSchema = new mongoose.Schema({
     email: String,
     linkedin: String,
     github: String,
-    latexCode: String // 👈 Changed from pdfUrl to latexCode
+    pdfUrl: String // 👈 MUST BE pdfUrl
   },
   about: {
     summary: String
