@@ -14,7 +14,9 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'portfolio_resumes',
     allowed_formats: ['pdf'],
-    resource_type: 'raw' 
+    resource_type: 'raw',
+    public_id: (req, file) => 'resume_file', // Sets a permanent name
+    format: 'pdf' // 👈 THIS IS THE FIX: Forces the .pdf extension
   }
 });
 
