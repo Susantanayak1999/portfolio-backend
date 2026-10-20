@@ -23,7 +23,7 @@ router.post('/login', async (req, res) => {
 // @route PUT /api/admin/resume
 router.put('/resume', auth, async (req, res) => {
   try {
-    const resume = await Resume.findOneAndUpdate({}, req.body, { new: true, upsert: true });
+    const resume = await Resume.findOneAndUpdate({}, req.body, { returnDocument: 'after', upsert: true });
     res.json(resume);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -34,11 +34,11 @@ router.put('/resume', auth, async (req, res) => {
 router.post('/upload', auth, upload.single('resume'), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-    
+
     // 👇 THIS IS THE MAGIC LINE THAT FIXES IT
     // Cloudinary automatically puts the full URL in req.file.path
-    res.json({ fileUrl: req.file.path }); 
-    
+    res.json({ fileUrl: req.file.path });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
