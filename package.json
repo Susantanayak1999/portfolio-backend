@@ -23,6 +23,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "node-latex": "^3.1.0",
     "nodemailer": "^10.1.7",
+    "resend": "^6.34.1",
     "socket.io": "^4.8.4"
   },
   "devDependencies": {
